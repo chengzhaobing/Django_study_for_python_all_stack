@@ -262,14 +262,14 @@
 
         <!-- 其他操作按钮 -->
         <div class="btn-secondary-group">
-            <button type="button" class="btn btn-outline-primary">
+            <a href="/register/" class="btn btn-outline-primary">
                 <i class="bi bi-person-plus me-1"></i>
                 注册账号
-            </button>
-            <button type="button" class="btn btn-outline-secondary">
+            </a>
+            <a href="/forgot-password/" class="btn btn-outline-secondary">
                 <i class="bi bi-question-circle me-1"></i>
                 忘记密码
-            </button>
+            </a>
         </div>
     </form>
 
@@ -389,8 +389,19 @@ particlesJS('particles-js', {
 });
 
 // 验证码点击刷新
-document.getElementById('captchaImg').addEventListener('click', function() {
-    this.src = '/img/code/?t=' + new Date().getTime();
+function refreshCaptcha() {
+    document.getElementById('captchaImg').src = '/img/code/?t=' + new Date().getTime();
+}
+
+document.getElementById('captchaImg').addEventListener('click', refreshCaptcha);
+
+// 检查是否有验证码错误，如果有则自动刷新验证码
+window.addEventListener('DOMContentLoaded', function() {
+    const codeErrors = document.querySelector('.captcha-input .error-message');
+    if (codeErrors) {
+        // 延迟刷新验证码，给用户时间看到错误信息
+        setTimeout(refreshCaptcha, 1000);
+    }
 });
 
 // 表单验证增强

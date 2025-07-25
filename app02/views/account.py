@@ -44,6 +44,98 @@ class LoginForm(BootstrapForm):
         return md5(pwd)
 
 
+class RegisterForm(BootstrapForm):
+    username = forms.CharField(
+        label="用户名",
+        widget=forms.TextInput,
+        required=True,
+        min_length=3,
+        max_length=20,
+        help_text="用户名长度3-20个字符"
+    )
+    password = forms.CharField(
+        label="密码",
+        widget=forms.PasswordInput,
+        required=True,
+        min_length=6,
+        help_text="密码长度至少6个字符"
+    )
+    confirm_password = forms.CharField(
+        label="确认密码",
+        widget=forms.PasswordInput,
+        required=True,
+    )
+    code = forms.CharField(
+        label="图片验证码",
+        widget=forms.TextInput,
+        required=True,
+    )
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        # 检查用户名是否已存在
+        if models.Admin.objects.filter(username=username).exists():
+            raise forms.ValidationError("用户名已存在")
+        return username
+
+    def clean_confirm_password(self):
+        password = self.cleaned_data.get("password")
+        confirm_password = self.cleaned_data.get("confirm_password")
+        if password and confirm_password and password != confirm_password:
+            raise forms.ValidationError("两次输入的密码不一致")
+        return confirm_password
+
+    def clean_password(self):
+        from app02.utils.encrypt import md5
+        pwd = self.cleaned_data.get("password")
+        return md5(pwd)
+
+
+class ForgotPasswordForm(BootstrapForm):
+    username = forms.CharField(
+        label="用户名",
+        widget=forms.TextInput,
+        required=True,
+        help_text="请输入您的用户名"
+    )
+    new_password = forms.CharField(
+        label="新密码",
+        widget=forms.PasswordInput,
+        required=True,
+        min_length=6,
+        help_text="新密码长度至少6个字符"
+    )
+    confirm_password = forms.CharField(
+        label="确认新密码",
+        widget=forms.PasswordInput,
+        required=True,
+    )
+    code = forms.CharField(
+        label="图片验证码",
+        widget=forms.TextInput,
+        required=True,
+    )
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        # 检查用户名是否存在
+        if not models.Admin.objects.filter(username=username).exists():
+            raise forms.ValidationError("用户名不存在")
+        return username
+
+    def clean_confirm_password(self):
+        new_password = self.cleaned_data.get("new_password")
+        confirm_password = self.cleaned_data.get("confirm_password")
+        if new_password and confirm_password and new_password != confirm_password:
+            raise forms.ValidationError("两次输入的密码不一致")
+        return confirm_password
+
+    def clean_new_password(self):
+        from app02.utils.encrypt import md5
+        pwd = self.cleaned_data.get("new_password")
+        return md5(pwd)
+
+
 def login(request):
     """ 用户登录 """
 
@@ -118,6 +210,56 @@ def img_code(request):
 
 
 
+
+
+def register(request):
+    """ 用户注册 """
+    if request.method == "GET":
+        form = RegisterForm()
+        return render(request, 'register.html', {'form': form})
+    
+    form = RegisterForm(data=request.POST)
+    if form.is_valid():
+        # 验证码校验
+        user_input_code = form.cleaned_data.pop('code')
+        code = request.session.get('image_code', "")
+        if code.upper() != user_input_code.upper():
+            form.add_error("code", "验证码错误")
+            return render(request, 'register.html', {'form': form})
+        
+        # 移除确认密码字段
+        form.cleaned_data.pop('confirm_password')
+        
+        # 创建用户
+        models.Admin.objects.create(**form.cleaned_data)
+        return redirect('/login/')
+    
+    return render(request, 'register.html', {'form': form})
+
+
+def forgot_password(request):
+    """ 忘记密码 """
+    if request.method == "GET":
+        form = ForgotPasswordForm()
+        return render(request, 'forgot_password.html', {'form': form})
+    
+    form = ForgotPasswordForm(data=request.POST)
+    if form.is_valid():
+        # 验证码校验
+        user_input_code = form.cleaned_data.pop('code')
+        code = request.session.get('image_code', "")
+        if code.upper() != user_input_code.upper():
+            form.add_error("code", "验证码错误")
+            return render(request, 'forgot_password.html', {'form': form})
+        
+        # 更新密码
+        username = form.cleaned_data.get('username')
+        new_password = form.cleaned_data.get('new_password')
+        models.Admin.objects.filter(username=username).update(password=new_password)
+        
+        return redirect('/login/')
+    
+    return render(request, 'forgot_password.html', {'form': form})
 
 
 def logout(request):

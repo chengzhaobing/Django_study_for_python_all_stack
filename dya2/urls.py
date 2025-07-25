@@ -6,7 +6,7 @@ from app02 import views
 
 # 因为这里我把原本views.py删掉了----自己新建了一个views文件夹，把不同的部分进行了拆分
 # 所以这里需要更改path
-from app02.views import depart, user, admin, account, task, order, chart, upload, profile
+from app02.views import depart, user, admin, account, task, order, chart, upload, profile, learning
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -71,6 +71,12 @@ urlpatterns = [
 
     # 用户登录
     path("login/", account.login),
+    
+    # 用户注册
+    path("register/", account.register),
+    
+    # 忘记密码
+    path("forgot-password/", account.forgot_password),
 
     # 注销
     path('logout/', account.logout),
@@ -124,5 +130,9 @@ urlpatterns = [
     path('profile/', profile.personal_profile),
     path('profile/update/', profile.update_profile),
     path('my-info/', profile.my_info),
+    
+    # 学习总结和代码说明
+    path('learning-summary/', learning.learning_summary),
+    path('code-guide/', learning.code_guide),
 ]
 
