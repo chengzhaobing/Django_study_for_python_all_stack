@@ -29,10 +29,7 @@
                         <div class="row mb-3">
                             <label for="inputEmail3" class="col-sm-2 col-form-label">{{ field.label }}</label>
                             <div class="col-sm-10">
-
                                 {{ field }}
-                                {# 在字段下方显示错误信息,不止一个,0取第一个错误 #}
-                                {# [错误0,错误1,错误2,...,错误n #}
                                 <span style="color: red">{{ field.errors.0 }}</span>
                             </div>
                         </div>

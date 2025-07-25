@@ -1,0 +1,546 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    .learning-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 0;
+        text-align: center;
+        margin: -30px -30px 40px -30px;
+        border-radius: 15px 15px 0 0;
+    }
+    
+    .learning-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .learning-header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+    
+    .category-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border-left: 5px solid;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .category-django { border-left-color: #28a745; }
+    .category-form { border-left-color: #007bff; }
+    .category-ajax { border-left-color: #ffc107; }
+    .category-chart { border-left-color: #dc3545; }
+    .category-file { border-left-color: #6f42c1; }
+    .category-browser { border-left-color: #fd7e14; }
+    
+    .category-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .category-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 15px;
+        color: white;
+        font-size: 1.2rem;
+    }
+    
+    .icon-django { background: #28a745; }
+    .icon-form { background: #007bff; }
+    .icon-ajax { background: #ffc107; }
+    .icon-chart { background: #dc3545; }
+    .icon-file { background: #6f42c1; }
+    .icon-browser { background: #fd7e14; }
+    
+    .file-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .file-item {
+        background: #f8f9fa;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        border-left: 3px solid #dee2e6;
+        transition: all 0.2s ease;
+    }
+    
+    .file-item:hover {
+        background: #e9ecef;
+        border-left-color: #6c757d;
+    }
+    
+    .file-name {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+    
+    .file-description {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin: 0;
+    }
+    
+    .stats-row {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 40px;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+    
+    .stat-label {
+        font-size: 1rem;
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .progress-section {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .progress-item {
+        margin-bottom: 20px;
+    }
+    
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+    
+    .progress {
+        height: 8px;
+        border-radius: 10px;
+        background: #e9ecef;
+    }
+    
+    .progress-bar {
+        border-radius: 10px;
+        transition: width 0.6s ease;
+    }
+    
+    /* 固定操作按钮样式 */
+    .fixed-actions {
+        position: fixed;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .btn-floating {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 1.2rem;
+    }
+    
+    .btn-floating:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+    
+    @media (max-width: 768px) {
+        .fixed-actions {
+            right: 15px;
+            top: auto;
+            bottom: 20px;
+            transform: none;
+        }
+        
+        .btn-floating {
+            width: 48px;
+            height: 48px;
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="learning-header">
+    <h1><i class="fas fa-graduation-cap me-3"></i>学习总结</h1>
+    <p>Django全栈开发学习历程与知识体系总览</p>
+    
+    <!-- 搜索栏 -->
+    <div class="row mt-4">
+        <div class="col-md-8 mx-auto">
+            <div class="input-group">
+                <input type="text" class="form-control" id="searchInput" placeholder="搜索学习内容、文件名或关键词..." style="background: rgba(255,255,255,0.9);">
+                <button class="btn btn-light" type="button" onclick="searchContent()">
+                    <i class="fas fa-search"></i> 搜索
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 固定操作按钮 -->
+<div class="fixed-actions">
+    <button class="btn btn-primary btn-floating mb-2" onclick="exportSummary()" title="导出总结">
+        <i class="fas fa-download"></i>
+    </button>
+    <button class="btn btn-success btn-floating" onclick="printSummary()" title="打印">
+        <i class="fas fa-print"></i>
+    </button>
+</div>
+
+<!-- 统计概览 -->
+<div class="stats-row">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="stat-item">
+                <div class="stat-number">{{ total_categories }}</div>
+                <div class="stat-label">学习分类</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-item">
+                <div class="stat-number">{{ total_files }}</div>
+                <div class="stat-label">学习文档</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-item">
+                <div class="stat-number">{{ total_images }}</div>
+                <div class="stat-label">示例图片</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-item">
+                <div class="stat-number">{{ total_code_files }}</div>
+                <div class="stat-label">代码文件</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-item">
+                <div class="stat-number">{{ study_days }}</div>
+                <div class="stat-label">学习天数</div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="stat-item">
+                <div class="stat-number">{{ completion_rate }}%</div>
+                <div class="stat-label">完成度</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 学习进度 -->
+<div class="progress-section">
+    <h3 class="mb-4"><i class="fas fa-chart-line me-2"></i>学习进度</h3>
+    {% for progress in learning_progress %}
+    <div class="progress-item">
+        <div class="progress-label">
+            <span>{{ progress.name }}</span>
+            <span>{{ progress.percentage }}%</span>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" style="width: {{ progress.percentage }}%; background-color: {{ progress.color }};"></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 学习分类详情 -->
+{% for category in learning_categories %}
+<div class="category-card category-{{ category.slug }}">
+    <div class="category-title">
+        <div class="category-icon icon-{{ category.slug }}">
+            <i class="{{ category.icon }}"></i>
+        </div>
+        {{ category.name }}
+        <span class="badge bg-secondary ms-auto">{{ category.files|length }} 个文件</span>
+    </div>
+    
+    <p class="text-muted mb-4">{{ category.description }}</p>
+    
+    <ul class="file-list">
+        {% for file in category.files %}
+        <li class="file-item">
+            <div class="file-name">
+                <i class="{{ file.icon }} me-2"></i>
+                {{ file.name }}
+            </div>
+            <p class="file-description">{{ file.description }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endfor %}
+
+<!-- 学习建议 -->
+<div class="category-card" style="border-left-color: #17a2b8;">
+    <div class="category-title">
+        <div class="category-icon" style="background: #17a2b8;">
+            <i class="fas fa-lightbulb"></i>
+        </div>
+        学习建议与总结
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h5><i class="fas fa-star text-warning me-2"></i>核心知识点</h5>
+            <ul class="list-unstyled">
+                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Django框架基础与模板语法</li>
+                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Form组件与ModelForm组件应用</li>
+                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Ajax异步交互与错误处理</li>
+                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>数据可视化与图表展示</li>
+                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>文件上传与操作处理</li>
+                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>浏览器交互与Session管理</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h5><i class="fas fa-rocket text-primary me-2"></i>下一步学习方向</h5>
+            <ul class="list-unstyled">
+                <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>Django REST Framework API开发</li>
+                <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>前端框架集成（Vue.js/React）</li>
+                <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>数据库优化与缓存策略</li>
+                <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>部署与运维自动化</li>
+                <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>微服务架构设计</li>
+                <li class="mb-2"><i class="fas fa-arrow-right text-primary me-2"></i>性能监控与日志分析</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    // 进度条动画
+    $('.progress-bar').each(function() {
+        var width = $(this).css('width');
+        $(this).css('width', '0');
+        $(this).animate({width: width}, 1500);
+    });
+    
+    // 卡片悬停效果
+    $('.category-card').hover(
+        function() {
+            $(this).find('.category-icon').addClass('animate__animated animate__pulse');
+        },
+        function() {
+            $(this).find('.category-icon').removeClass('animate__animated animate__pulse');
+        }
+    );
+    
+    // 搜索功能
+    $('#searchInput').on('input', function() {
+        var searchTerm = $(this).val().toLowerCase();
+        if (searchTerm === '') {
+            $('.category-card').show();
+            $('.file-item').show();
+        } else {
+            searchContent();
+        }
+    });
+    
+    // 回车键搜索
+    $('#searchInput').on('keypress', function(e) {
+        if (e.which === 13) {
+            searchContent();
+        }
+    });
+});
+
+// 搜索功能实现
+function searchContent() {
+    var searchTerm = $('#searchInput').val().toLowerCase();
+    var foundResults = false;
+    
+    if (searchTerm === '') {
+        $('.category-card').show();
+        $('.file-item').show();
+        return;
+    }
+    
+    $('.category-card').each(function() {
+        var categoryVisible = false;
+        var $category = $(this);
+        
+        // 搜索分类名称和描述
+        var categoryText = $category.find('.category-title').text().toLowerCase() + 
+                          $category.find('p').text().toLowerCase();
+        
+        if (categoryText.includes(searchTerm)) {
+            categoryVisible = true;
+            $category.find('.file-item').show();
+        } else {
+            // 搜索文件内容
+            $category.find('.file-item').each(function() {
+                var fileText = $(this).text().toLowerCase();
+                if (fileText.includes(searchTerm)) {
+                    $(this).show();
+                    categoryVisible = true;
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+        
+        if (categoryVisible) {
+            $category.show();
+            foundResults = true;
+        } else {
+            $category.hide();
+        }
+    });
+    
+    // 显示搜索结果提示
+    if (!foundResults) {
+        if ($('#noResults').length === 0) {
+            $('.stats-row').after('<div id="noResults" class="alert alert-info text-center"><i class="fas fa-search me-2"></i>未找到包含 "' + searchTerm + '" 的内容</div>');
+        }
+    } else {
+        $('#noResults').remove();
+    }
+}
+
+// 导出总结功能
+function exportSummary() {
+    // 创建导出内容
+    var exportContent = '# Django学习总结报告\n\n';
+    exportContent += '生成时间: ' + new Date().toLocaleString() + '\n\n';
+    
+    // 添加统计信息
+    exportContent += '## 学习统计\n';
+    exportContent += '- 学习分类: {{ total_categories }} 个\n';
+    exportContent += '- 学习文档: {{ total_files }} 个\n';
+    exportContent += '- 示例图片: {{ total_images }} 个\n';
+    exportContent += '- 代码文件: {{ total_code_files }} 个\n';
+    exportContent += '- 学习天数: {{ study_days }} 天\n';
+    exportContent += '- 完成度: {{ completion_rate }}%\n\n';
+    
+    // 添加学习进度
+    exportContent += '## 学习进度\n';
+    {% for progress in learning_progress %}
+    exportContent += '- {{ progress.name }}: {{ progress.percentage }}%\n';
+    {% endfor %}
+    exportContent += '\n';
+    
+    // 添加分类详情
+    exportContent += '## 学习内容详情\n';
+    {% for category in learning_categories %}
+    exportContent += '\n### {{ category.name }}\n';
+    exportContent += '{{ category.description }}\n\n';
+    exportContent += '**包含文件:**\n';
+    {% for file in category.files %}
+    exportContent += '- {{ file.name }}: {{ file.description }}\n';
+    {% endfor %}
+    {% endfor %}
+    
+    // 创建下载链接
+    var blob = new Blob([exportContent], { type: 'text/markdown' });
+    var url = window.URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'Django学习总结_' + new Date().toISOString().split('T')[0] + '.md';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    // 显示成功提示
+    showNotification('学习总结已导出为Markdown文件', 'success');
+}
+
+// 打印功能
+function printSummary() {
+    // 隐藏不需要打印的元素
+    $('.learning-header .row').hide();
+    $('.btn').hide();
+    
+    // 打印页面
+    window.print();
+    
+    // 恢复隐藏的元素
+    setTimeout(function() {
+        $('.learning-header .row').show();
+        $('.btn').show();
+    }, 1000);
+}
+
+// 通知提示功能
+function showNotification(message, type) {
+    var alertClass = 'alert-' + (type === 'success' ? 'success' : 'info');
+    var notification = $('<div class="alert ' + alertClass + ' alert-dismissible fade show position-fixed" style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">' +
+        '<i class="fas fa-' + (type === 'success' ? 'check-circle' : 'info-circle') + ' me-2"></i>' + message +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+        '</div>');
+    
+    $('body').append(notification);
+    
+    // 自动消失
+    setTimeout(function() {
+        notification.alert('close');
+    }, 3000);
+}
+
+// 添加快捷键支持
+$(document).keydown(function(e) {
+    // Ctrl+F 聚焦搜索框
+    if (e.ctrlKey && e.keyCode === 70) {
+        e.preventDefault();
+        $('#searchInput').focus();
+    }
+    // Ctrl+P 打印
+    if (e.ctrlKey && e.keyCode === 80) {
+        e.preventDefault();
+        printSummary();
+    }
+    // Ctrl+S 导出
+    if (e.ctrlKey && e.keyCode === 83) {
+        e.preventDefault();
+        exportSummary();
+    }
+});
+</script>
+{% endblock %}

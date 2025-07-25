@@ -12,7 +12,7 @@ class AuthMiddleware(MiddlewareMixin):
         # 0. 排除那些不需要登录就能访问的页面
         # request.path_info----获取当前用户请求的url
                                 # 需要排除的网址
-        if request.path_info in ["/", "/login/", "/img/code/"]:
+        if request.path_info in ["/", "/login/", "/img/code/", "/register/", "/forgot-password/", "/learning-summary/", "/code-guide/"]:
             return
 
         # 1. 读取当前访问的用户的Session信息，如果能读到，说明已经登录过，可以继续向后走

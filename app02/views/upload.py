@@ -4,13 +4,9 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django import forms
 # 自定义
+from app02.utils.bootstrap import BootstrapForm
 
 
-
-class UploadForm(forms.Form):
-    name = forms.CharField(label="姓名")
-    age = forms.IntegerField(label="年龄")
-    img = forms.FileField(label="头像")
 
 
 def upload_list(request):
@@ -32,11 +28,23 @@ def upload_list(request):
 
     return HttpResponse("ok")
 
+
+
+class UploadForm(BootstrapForm):
+    bootstrap_exclude_fields = ['img']
+
+    name = forms.CharField(label="姓名")
+    age = forms.IntegerField(label="年龄")
+    img = forms.FileField(label="头像")
+
 def upload_form(request):
+    title = "Form上传"
     if request.method == "GET":
         form = UploadForm()
         context = {
-            "title":"Form上传",
+
             "form": form
         }
-        return render(request, 'upload_form.html',)
+        return render(request, 'upload_form.html', context)
+
+    form = UploadForm(data=request.POST, files=request.FILES)

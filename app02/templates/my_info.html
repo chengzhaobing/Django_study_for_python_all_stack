@@ -456,6 +456,58 @@
     </div>
     {% endfor %}
     
+    <!-- 个人标签 -->
+    <h2 class="section-title">个人标签</h2>
+    <div class="tech-card">
+        <div class="row">
+            {% for tag in personal_tags %}
+            <div class="col-md-3 col-sm-6 mb-3">
+                <div class="tag-item text-center p-3" style="background: linear-gradient(135deg, {{ tag.color }}, {{ tag.color }}33); border-radius: 12px; transition: all 0.3s ease;">
+                    <i class="{{ tag.icon }}" style="font-size: 2rem; color: {{ tag.color }}; margin-bottom: 10px;"></i>
+                    <h5 style="color: #333; margin-bottom: 5px;">{{ tag.name }}</h5>
+                    <p style="color: #666; font-size: 0.9rem; margin: 0;">{{ tag.description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- 学习历程 -->
+    <h2 class="section-title">学习历程</h2>
+    <div class="tech-card">
+        <div class="learning-timeline">
+            {% for item in learning_journey %}
+            <div class="timeline-item mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="timeline-date" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 10px 15px; border-radius: 8px; text-align: center; font-weight: 600;">
+                            {{ item.category }}
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="timeline-content" style="background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                            <h5 style="color: #333; margin-bottom: 15px;">{{ item.title }}</h5>
+                            <div class="learning-summary" style="color: #666; line-height: 1.6; margin-bottom: 15px;">
+                                {{ item.summary|safe }}
+                            </div>
+                            {% if item.key_points %}
+                            <div class="key-points">
+                                <h6 style="color: #667eea; margin-bottom: 10px;"><i class="bi bi-lightbulb-fill me-2"></i>关键要点：</h6>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    {% for point in item.key_points %}
+                                    <li style="color: #555; margin-bottom: 5px;">{{ point }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
     <!-- 代码示例 -->
     <h2 class="section-title">代码示例</h2>
     <div class="code-section">
@@ -477,7 +529,7 @@
             <div class="col-md-4 mb-3">
                 <i class="bi bi-envelope-fill" style="font-size: 2rem; margin-bottom: 10px;"></i>
                 <p class="mb-0">邮箱</p>
-                <p class="mb-0">developer@example.com</p>
+                <p class="mb-0">fiee1213@outlook.com</p>
             </div>
             <div class="col-md-4 mb-3">
                 <i class="bi bi-github" style="font-size: 2rem; margin-bottom: 10px;"></i>
