@@ -1,0 +1,160 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container-fluid">
+        <!-- 页面标题 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary mb-0">
+                <i class="bi bi-building-add me-2"></i>
+                新建部门
+            </h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/depart/list/" class="text-decoration-none">部门管理</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">新建部门</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- 新建表单 -->
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        <h5 class="mb-0">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            部门信息录入
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="departTitle" class="form-label fw-semibold">
+                                    <i class="bi bi-building me-1"></i>
+                                    部门名称
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-lg" 
+                                       id="departTitle"
+                                       name="title" 
+                                       placeholder="请输入部门名称（如：技术部、人事部、财务部）"
+                                       required>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    请输入准确的部门名称，便于后续管理
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="departDesc" class="form-label fw-semibold">
+                                    <i class="bi bi-card-text me-1"></i>
+                                    部门描述 <span class="text-muted">(可选)</span>
+                                </label>
+                                <textarea class="form-control" 
+                                          id="departDesc"
+                                          name="description" 
+                                          rows="3"
+                                          placeholder="请简要描述该部门的职能和职责..."></textarea>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-3 mt-4">
+                                <a href="/depart/list/" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    返回列表
+                                </a>
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    创建部门
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 提示信息卡片 -->
+                <div class="card mt-4 border-info">
+                    <div class="card-body">
+                        <h6 class="card-title text-info">
+                            <i class="bi bi-lightbulb me-2"></i>
+                            温馨提示
+                        </h6>
+                        <ul class="list-unstyled mb-0 text-muted">
+                            <li><i class="bi bi-check2 me-2 text-success"></i>部门名称应简洁明了，便于识别</li>
+                            <li><i class="bi bi-check2 me-2 text-success"></i>创建后可在部门列表中进行编辑和管理</li>
+                            <li><i class="bi bi-check2 me-2 text-success"></i>部门将用于用户归属和权限管理</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* 表单控件焦点效果 */
+        .form-control:focus, .form-select:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+
+        /* 按钮悬停效果 */
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+
+        /* 成功按钮特殊效果 */
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        /* 卡片悬停效果 */
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            transition: all 0.3s ease;
+        }
+
+        /* 面包屑导航样式 */
+        .breadcrumb-item a {
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #1e7e34;
+        }
+
+        /* 表单标签样式 */
+        .form-label {
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 表单提示文字 */
+        .form-text {
+            color: #6c757d;
+            font-size: 0.875em;
+        }
+
+        /* 提示卡片样式 */
+        .border-info {
+            border-left: 4px solid #17a2b8 !important;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .d-flex.gap-3 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+        }
+    </style>
+{% endblock %}

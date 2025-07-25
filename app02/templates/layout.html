@@ -1,0 +1,349 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>国家商业管理信息系统</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-5.0.0/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-icons-1.13.1/bootstrap-icons.min.css' %}">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-gray: #f8f9fa;
+            --border-color: #e0e0e0;
+            --text-color: #333333;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fb 0%, #e8f2ff 100%);
+            color: var(--text-color);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 0.8rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: white !important;
+            letter-spacing: 0.5px;
+            font-size: 1.4rem;
+        }
+
+        .nav-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
+            width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .nav-center ul {
+            display: flex;
+            flex-wrap: nowrap;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-center li {
+            flex-shrink: 0;
+            margin: 0 0.2rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            display: block;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .nav-link:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background-color: white;
+            border-radius: 1px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .nav-link {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .nav-center {
+                justify-content: flex-start;
+                padding-left: 1rem;
+            }
+            .nav-link {
+                padding: 0.4rem 0.5rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.95rem;
+        }
+
+        .custom-table thead th {
+            background-color: #f8fafc;
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 16px 20px;
+            border-bottom: 2px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .custom-table tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        .custom-table tbody tr:nth-child(even) {
+            background-color: #fbfcff;
+        }
+
+        .custom-table tbody tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .custom-table tbody tr:hover {
+            background-color: #f1f5ff;
+        }
+
+        .custom-table tbody td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .custom-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: rgba(var(--warning-color), 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-completed {
+            background-color: rgba(var(--success-color), 0.1);
+            color: var(--success-color);
+        }
+
+        .status-processing {
+            background-color: rgba(var(--primary-color), 0.1);
+            color: var(--primary-color);
+        }
+
+        .status-cancelled {
+            background-color: rgba(var(--danger-color), 0.1);
+            color: var(--danger-color);
+        }
+
+        .action-btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 70px;
+        }
+
+        .action-btn i {
+            margin-right: 5px;
+        }
+
+        .btn-edit {
+            background-color: rgba(var(--primary-color), 0.1);
+            color: var(--primary-color);
+            border: none;
+        }
+
+        .btn-edit:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: rgba(var(--danger-color), 0.1);
+            color: var(--danger-color);
+            border: none;
+        }
+
+        .btn-delete:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .table-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-card-header {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 25px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 0 0 12px 12px;
+        }
+
+        /* 页面内容区域美化 */
+        .content-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* 卡片组件增强 */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 按钮美化 */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.3);
+        }
+
+        /* 输入框美化 */
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+            background: white;
+        }
+    </style>
+    {% block css %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg" style="margin-bottom: 30px">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">国家商业信息管理系统</a>
+        
+        <!-- 中央导航菜单 -->
+        <div class="nav-center">
+            <ul>
+                <li><a class="nav-link" href="/admin/list/">管理员账户</a></li>
+                <li><a class="nav-link" href="/depart/list/">部门管理</a></li>
+                <li><a class="nav-link" href="/user/list/">用户管理</a></li>
+                <li><a class="nav-link" href="/task/list/">任务管理</a></li>
+                <li><a class="nav-link" href="/order/list/">订单管理</a></li>
+                <li><a class="nav-link" href="/chart/list/">数据统计</a></li>
+                <li><a class="nav-link" href="/chart/highchart/">highcharts</a></li>
+                <li><a class="nav-link" href="/upload/form/">form上传</a></li>
+                <li><a class="nav-link" href="#">其他</a></li>
+            </ul>
+        </div>
+        
+        <!-- 用户下拉菜单 -->
+        <div class="navbar-nav ms-auto">
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false" style="color: rgba(255, 255, 255, 0.9) !important;">
+                    {{ request.session.info.name }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="/profile/">个人资料</a></li>
+                    <li><a class="dropdown-item" href="/my-info/">我的信息</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/logout/">注销</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="content-wrapper">
+    {% block content %}{% endblock %}
+</div>
+
+
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-5.0.0/js/bootstrap.min.js' %}"></script>
+
+{% block js %}{% endblock %}
+
+</body>
+</html>

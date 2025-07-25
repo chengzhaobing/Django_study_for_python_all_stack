@@ -1,0 +1,363 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/index/"><i class="bi bi-house-door"></i> 首页</a></li>
+            <li class="breadcrumb-item active" aria-current="page">文件上传</li>
+        </ol>
+    </nav>
+
+    <!-- 页面标题 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="bi bi-cloud-upload-fill text-primary me-2"></i>
+            文件上传中心
+        </h2>
+    </div>
+
+    <!-- 上传表单卡片 -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-upload me-2"></i>
+                        上传文件
+                    </h5>
+                    <small class="opacity-75">支持多种文件格式上传</small>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" id="uploadForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label for="username" class="form-label fw-bold">
+                                <i class="bi bi-person me-1"></i>
+                                用户名
+                            </label>
+                            <input type="text" 
+                                   name="username" 
+                                   id="username"
+                                   class="form-control form-control-lg" 
+                                   placeholder="请输入用户名"
+                                   required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="upload_file" class="form-label fw-bold">
+                                <i class="bi bi-file-earmark-arrow-up me-1"></i>
+                                选择文件
+                            </label>
+                            <div class="upload-area" id="uploadArea">
+                                <input type="file" 
+                                       name="upload_file" 
+                                       id="upload_file"
+                                       class="form-control form-control-lg"
+                                       accept="*/*"
+                                       required>
+                                <div class="upload-hint mt-3">
+                                    <i class="bi bi-cloud-upload display-4 text-muted mb-2"></i>
+                                    <p class="text-muted mb-1">点击选择文件或拖拽文件到此区域</p>
+                                    <small class="text-muted">支持所有文件格式</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 文件信息显示区域 -->
+                        <div id="fileInfo" class="file-info mb-4" style="display: none;">
+                            <div class="alert alert-info d-flex align-items-center">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <div>
+                                    <strong>已选择文件：</strong>
+                                    <span id="fileName"></span>
+                                    <br>
+                                    <small class="text-muted">
+                                        文件大小：<span id="fileSize"></span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 上传进度条 -->
+                        <div id="uploadProgress" class="mb-4" style="display: none;">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" 
+                                     style="width: 0%" 
+                                     aria-valuenow="0" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 justify-content-end">
+                            <button type="reset" class="btn btn-outline-secondary btn-lg" id="resetBtn">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                重置
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="bi bi-cloud-upload me-2"></i>
+                                开始上传
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 上传提示卡片 -->
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-8 col-md-10">
+            <div class="card border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-lightbulb text-warning me-2"></i>
+                        上传提示
+                    </h6>
+                    <ul class="list-unstyled mb-0 small text-muted">
+                        <li><i class="bi bi-check-circle text-success me-2"></i>支持所有文件格式上传</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>建议单个文件大小不超过100MB</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>请确保文件名不包含特殊字符</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>上传过程中请勿关闭页面</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* 上传区域样式 */
+.upload-area {
+    position: relative;
+    border: 2px dashed #dee2e6;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.upload-area:hover {
+    border-color: #0d6efd;
+    background: #e7f3ff;
+}
+
+.upload-area.dragover {
+    border-color: #0d6efd;
+    background: #e7f3ff;
+    transform: scale(1.02);
+}
+
+.upload-area input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.upload-hint {
+    pointer-events: none;
+}
+
+/* 表单控件焦点效果 */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+/* 按钮悬停效果 */
+.btn:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0b5ed7 0%, #0a58ca 100%);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+/* 卡片悬停效果 */
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transition: box-shadow 0.3s ease;
+}
+
+/* 面包屑样式 */
+.breadcrumb {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #0d6efd;
+}
+
+/* 表单标签样式 */
+.form-label {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* 渐变背景 */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+}
+
+/* 文件信息样式 */
+.file-info {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 进度条样式 */
+.progress {
+    height: 1.5rem;
+    border-radius: 0.5rem;
+}
+
+.progress-bar {
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .d-flex.gap-3 {
+        flex-direction: column;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+    
+    .upload-area {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<script>
+// 文件上传交互功能
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('upload_file');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBar = uploadProgress.querySelector('.progress-bar');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    
+    // 文件选择事件
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            showFileInfo(file);
+        }
+    });
+    
+    // 拖拽功能
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            showFileInfo(files[0]);
+        }
+    });
+    
+    // 显示文件信息
+    function showFileInfo(file) {
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+        fileInfo.style.display = 'block';
+    }
+    
+    // 格式化文件大小
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    // 重置表单
+    resetBtn.addEventListener('click', function() {
+        fileInfo.style.display = 'none';
+        uploadProgress.style.display = 'none';
+        progressBar.style.width = '0%';
+        progressBar.textContent = '0%';
+    });
+    
+    // 表单提交（模拟进度）
+    uploadForm.addEventListener('submit', function(e) {
+        if (!fileInput.files[0]) {
+            e.preventDefault();
+            alert('请先选择文件！');
+            return;
+        }
+        
+        // 显示进度条
+        uploadProgress.style.display = 'block';
+        submitBtn.disabled = true;
+        
+        // 模拟上传进度
+        let progress = 0;
+        const interval = setInterval(function() {
+            progress += Math.random() * 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                submitBtn.disabled = false;
+            }
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = Math.round(progress) + '%';
+        }, 200);
+    });
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,423 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 - 管理系统</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-5.3/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 粒子背景容器 */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .login-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .login-header p {
+            color: #666;
+            margin: 0;
+        }
+
+        .form-floating {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-floating > .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem 0.75rem;
+            height: auto;
+            transition: all 0.3s ease;
+        }
+
+        .form-floating > .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.15);
+        }
+
+        .form-floating > label {
+            color: #666;
+            padding: 1rem 0.75rem;
+        }
+
+        .captcha-container {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+            margin-bottom: 1.5rem;
+        }
+
+        .captcha-input {
+            flex: 1;
+        }
+
+        .captcha-image {
+            width: 120px;
+            height: 50px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .captcha-image:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary-group {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-secondary-group .btn {
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary-group .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .system-info {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 576px) {
+            .login-container {
+                margin: 1rem;
+                padding: 2rem 1.5rem;
+            }
+            
+            .captcha-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .captcha-image {
+                width: 100%;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 粒子背景 -->
+<div id="particles-js"></div>
+
+<!-- 登录容器包装器 -->
+<div class="login-wrapper">
+    <div class="login-container">
+    <div class="login-header">
+        <h1>
+            <i class="bi bi-shield-lock text-primary me-2"></i>
+            用户登录
+        </h1>
+        <p>欢迎使用管理系统</p>
+    </div>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <!-- 用户名输入框 -->
+        <div class="form-floating">
+            {{ form.username }}
+            <label for="{{ form.username.id_for_label }}">
+                <i class="bi bi-person me-1"></i>
+                用户名
+            </label>
+            {% if form.username.errors %}
+                <div class="error-message">
+                    <i class="bi bi-exclamation-circle"></i>
+                    {{ form.username.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 密码输入框 -->
+        <div class="form-floating">
+            {{ form.password }}
+            <label for="{{ form.password.id_for_label }}">
+                <i class="bi bi-lock me-1"></i>
+                密码
+            </label>
+            {% if form.password.errors %}
+                <div class="error-message">
+                    <i class="bi bi-exclamation-circle"></i>
+                    {{ form.password.errors.0 }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 验证码部分 -->
+        <div class="captcha-container">
+            <div class="captcha-input">
+                <div class="form-floating">
+                    {{ form.code }}
+                    <label for="{{ form.code.id_for_label }}">
+                        <i class="bi bi-shield-check me-1"></i>
+                        验证码
+                    </label>
+                </div>
+                {% if form.code.errors %}
+                    <div class="error-message">
+                        <i class="bi bi-exclamation-circle"></i>
+                        {{ form.code.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+            <img id="captchaImg" 
+                 src="/img/code/" 
+                 class="captcha-image" 
+                 alt="验证码"
+                 title="点击刷新验证码">
+        </div>
+
+        <!-- 登录按钮 -->
+        <button type="submit" class="btn btn-primary btn-login">
+            <i class="bi bi-box-arrow-in-right me-2"></i>
+            立即登录
+        </button>
+
+        <!-- 其他操作按钮 -->
+        <div class="btn-secondary-group">
+            <button type="button" class="btn btn-outline-primary">
+                <i class="bi bi-person-plus me-1"></i>
+                注册账号
+            </button>
+            <button type="button" class="btn btn-outline-secondary">
+                <i class="bi bi-question-circle me-1"></i>
+                忘记密码
+            </button>
+        </div>
+    </form>
+
+        <div class="system-info">
+            <i class="bi bi-info-circle me-1"></i>
+            系统管理平台 v2.0
+        </div>
+    </div>
+</div>
+
+<!-- 引入particles.js库 -->
+<script src="{% static 'js/particles.min.js' %}"></script>
+
+<script>
+// 粒子背景配置 - 类似Trae官网的现代化效果
+particlesJS('particles-js', {
+    "particles": {
+        "number": {
+            "value": 120,
+            "density": {
+                "enable": true,
+                "value_area": 1000
+            }
+        },
+        "color": {
+            "value": ["#667eea", "#764ba2", "#f093fb", "#f5576c", "#4facfe", "#00f2fe"]
+        },
+        "shape": {
+            "type": "circle",
+            "stroke": {
+                "width": 0,
+                "color": "#000000"
+            }
+        },
+        "opacity": {
+            "value": 0.6,
+            "random": true,
+            "anim": {
+                "enable": true,
+                "speed": 1,
+                "opacity_min": 0.1,
+                "sync": false
+            }
+        },
+        "size": {
+            "value": 4,
+            "random": true,
+            "anim": {
+                "enable": true,
+                "speed": 2,
+                "size_min": 0.5,
+                "sync": false
+            }
+        },
+        "line_linked": {
+            "enable": true,
+            "distance": 120,
+            "color": "#ffffff",
+            "opacity": 0.3,
+            "width": 1.5
+        },
+        "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "none",
+            "random": true,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+                "enable": true,
+                "rotateX": 600,
+                "rotateY": 600
+            }
+        }
+    },
+    "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+            "onhover": {
+                "enable": true,
+                "mode": "grab"
+            },
+            "onclick": {
+                "enable": true,
+                "mode": "bubble"
+            },
+            "resize": true
+        },
+        "modes": {
+            "grab": {
+                "distance": 200,
+                "line_linked": {
+                    "opacity": 0.8
+                }
+            },
+            "bubble": {
+                "distance": 300,
+                "size": 8,
+                "duration": 2,
+                "opacity": 0.8,
+                "speed": 3
+            },
+            "repulse": {
+                "distance": 150,
+                "duration": 0.4
+            },
+            "push": {
+                "particles_nb": 6
+            },
+            "remove": {
+                "particles_nb": 2
+            }
+        }
+    },
+    "retina_detect": true
+});
+
+// 验证码点击刷新
+document.getElementById('captchaImg').addEventListener('click', function() {
+    this.src = '/img/code/?t=' + new Date().getTime();
+});
+
+// 表单验证增强
+document.querySelector('form').addEventListener('submit', function(e) {
+    const username = document.querySelector('input[name="username"]').value;
+    const password = document.querySelector('input[name="password"]').value;
+    const code = document.querySelector('input[name="code"]').value;
+    
+    if (!username.trim()) {
+        e.preventDefault();
+        alert('请输入用户名');
+        return;
+    }
+    
+    if (!password.trim()) {
+        e.preventDefault();
+        alert('请输入密码');
+        return;
+    }
+    
+    if (!code.trim()) {
+        e.preventDefault();
+        alert('请输入验证码');
+        return;
+    }
+});
+</script>
+
+</body>
+</html>

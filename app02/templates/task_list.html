@@ -1,0 +1,388 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+    <div class="container-fluid">
+        <!-- 页面标题和操作按钮 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary mb-0">
+                <i class="bi bi-list-task me-2"></i>
+                任务管理中心
+            </h2>
+            <div class="btn-group" role="group">
+                <a class="btn btn-success btn-lg" target="_blank" href="/task/ajax/">
+                    <i class="bi bi-mortarboard me-2"></i>
+                    Ajax学习
+                </a>
+            </div>
+        </div>
+
+        <!-- 新建任务表单 -->
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                <h5 class="mb-0">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    新建任务
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="formAdd" method="post" novalidate> <!--  提交后的目的地址 action -->
+                    <div class="row">
+                        {% for field in form %}
+                            <div class="col-md-6">
+                                <div class="form-group mb-3" style="position: relative;">
+                                    <label class="form-label fw-semibold">
+                                        <i class="bi bi-tag me-1"></i>{{ field.label }}
+                                    </label>
+                                    {{ field }}
+                                    <span style="color: red;position: absolute"></span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="text-end">
+                        <button id="btnAdd" type="button" class="btn btn-success btn-lg px-4">
+                            <i class="bi bi-check-circle me-2"></i>
+                            创建任务
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- 任务列表 -->
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-gradient text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ul me-2"></i>
+                    任务列表
+                </h5>
+                <span class="badge bg-light text-dark fs-6">
+                    共 {{ queryset|length }} 个任务
+                </span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="text-center">
+                                <i class="bi bi-hash me-1"></i>ID
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-bookmark me-1"></i>任务标题
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-star me-1"></i>优先级别
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-person-check me-1"></i>负责人
+                            </th>
+                            <th scope="col" class="text-center">
+                                <i class="bi bi-gear me-1"></i>操作
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for obj in queryset %}
+                            <tr class="align-middle">
+                                {% csrf_token %}
+                                <td class="text-center fw-bold text-primary">{{ obj.id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="task-icon me-2">
+                                            <i class="bi bi-check2-square"></i>
+                                        </div>
+                                        <span class="fw-semibold">{{ obj.title }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if obj.get_level_display == '高' %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>{{ obj.get_level_display }}
+                                        </span>
+                                    {% elif obj.get_level_display == '中' %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-dash-circle me-1"></i>{{ obj.get_level_display }}
+                                        </span>
+                                    {% elif obj.get_level_display == '低' %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>{{ obj.get_level_display }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">
+                                            {{ obj.get_level_display }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle-sm me-2">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                        <span>{{ obj.user.username }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-outline-primary btn-sm" title="编辑任务">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" title="删除任务">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- 分页导航 -->
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {{ page_string }}
+                </ul>
+            </nav>
+        </div>
+
+        <br><br><br>
+        <hr>
+        <br><br><br>
+        <h1>Ajax学习</h1>
+
+        <h3>示例1</h3>
+        <input id="btn1" type="button" class="btn btn-primary" value="点击按钮1">
+
+        <h3>示例2</h3>
+        <input type="text" id="txtUser" placeholder="姓名">
+        <input type="text" id="txtAge" placeholder="年龄">
+        <input type="button" id="btn2" class="btn btn-success" value="点击按钮2">
+
+        <h3>示例3</h3>
+        <form id="form3">
+            <input type="text" name="user" placeholder="姓名">
+            <input type="text" name="age" placeholder="年龄">
+            <input type="text" name="gender" placeholder="性别">
+            <input type="text" name="email" placeholder="邮箱">
+            <input type="text" name="more" placeholder="介绍">
+        </form>
+        <input id="btn3" type="button" class="btn btn-danger" value="点击按钮3">
+
+
+    </div>
+{% endblock %}
+
+{% block css %}
+    <style>
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        
+        .avatar-circle-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .task-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(111, 66, 193, 0.05);
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-group .btn {
+            transition: all 0.2s ease;
+        }
+        
+        .btn-group .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+        
+        .pagination .page-link {
+            border: none;
+            margin: 0 2px;
+            border-radius: 8px;
+            color: #6f42c1;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+            border: none;
+        }
+        
+        .pagination .page-link:hover {
+            background-color: rgba(111, 66, 193, 0.1);
+            color: #6f42c1;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.5em 0.75em;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        {# 2. 示例1：JQuery方式绑定#}
+        $(function () {
+            // 页面框架加载完成后自动执行下面的函数
+            bindBtn1Event();
+            bindBtn2Event();
+            bindBtn3Event();
+            bindBtnAddEvent();
+        })
+
+        function bindBtn1Event() {
+            // 函数内部先找到btn1这个按钮，然后绑定一个事件--click点击这个事件后，执行内部代码
+            $("#btn1").click(function () {
+                $.ajax({
+                    url: '/task/ajax/',
+                    type: "post",
+                    data: {
+                        n1: 123,
+                        n2: 456
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        console.log(res);
+                        console.log(res.status);
+                        console.log(res.data);
+                    }
+                })
+            })
+        }
+
+        {#示例2：将inpt输入框内的内容传到后台，传到django后台#}
+
+        function bindBtn2Event() {
+            // 函数内部先找到btn1这个按钮，然后绑定一个事件--click点击这个事件后，执行内部代码
+            $("#btn2").click(function () {
+                $.ajax({
+                    url: '/task/ajax/',
+                    type: "post",
+                    data: {
+                        name: $("#txtUser").val(),
+                        age: $("#txtAge").val(),
+                    },
+                    dataType: 'json',
+                    success: function (res) {
+                        console.log(res);
+                        console.log(res.status);
+                        console.log(res.data);
+                    }
+                })
+            })
+        }
+
+        {#示例3 ：多输入框传到后台   #}
+
+        function bindBtn3Event() {
+            // 函数内部先找到btn1这个按钮，然后绑定一个事件--click点击这个事件后，执行内部代码
+            $("#btn3").click(function () {
+                $.ajax({
+                    url: '/task/ajax/',
+                    type: "post",
+                    data: $("#form3").serialize(),
+                    dataType: 'JSON',
+                    success: function (res) {
+                        console.log(res);
+                        console.log(res.status);
+                        console.log(res.data);
+                    }
+                })
+            })
+        }
+
+        function bindBtnAddEvent() {
+            // 函数内部先找到btn1这个按钮，然后绑定一个事件--click点击这个事件后，执行内部代码
+            $("#btnAdd").click(function () {
+
+                $.ajax({
+                    url: '/task/add/',
+                    type: "post",
+                    data: $("#formAdd").serialize(),
+                    dataType: 'JSON',
+                    success: function (res) {
+                        if (res.status) {
+                            alert("添加成功");
+                            location.reload();//刷新页面=F5
+                        } else {
+                            $.each(res.error, function (name, data) {
+                                {#console.log(name,data);#}
+                                $("#id_" + name).next().text(data[0])
+                            })
+                        }
+                    }
+                })
+            })
+        }
+
+        {# 1. DOM方式绑定#}
+        {#function clickMe() {#}
+        {#console.log('点击了按钮');#}
+        {#     $.ajax({#}
+        {#        url: '/task/ajax/',#}
+        {#        type: "post",#}
+        {#        data: {#}
+        {#            n1: 123,#}
+        {#            n2: 456#}
+        {#        },#}
+        {#         dataType: 'json',#}
+        {#        success:function(res){#}
+        {#            console.log(res);#}
+        {#        }#}
+        {#    })#}
+        {#{#}
+        {##}
+    </script>
+{% endblock %}

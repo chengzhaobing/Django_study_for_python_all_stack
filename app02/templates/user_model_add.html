@@ -1,0 +1,258 @@
+
+{% extends 'layout.html' %}
+
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/index/"><i class="bi bi-house-door"></i> 首页</a></li>
+            <li class="breadcrumb-item"><a href="/user/list/">用户管理</a></li>
+            <li class="breadcrumb-item active" aria-current="page">新建用户(ModelForm)</li>
+        </ol>
+    </nav>
+
+    <!-- 页面标题 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="bi bi-person-plus-fill text-primary me-2"></i>
+            新建用户 <small class="text-muted">(ModelForm版本)</small>
+        </h2>
+    </div>
+
+    <!-- 表单卡片 -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-circle me-2"></i>
+                        用户信息表单
+                    </h5>
+                    <small class="opacity-75">使用Django ModelForm自动生成表单</small>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            {% for field in form %}
+                                <div class="col-md-6 mb-4">
+                                    <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                                        {% if field.name == 'name' %}
+                                            <i class="bi bi-person me-1"></i>
+                                        {% elif field.name == 'password' %}
+                                            <i class="bi bi-lock me-1"></i>
+                                        {% elif field.name == 'age' %}
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                        {% elif field.name == 'account' %}
+                                            <i class="bi bi-wallet2 me-1"></i>
+                                        {% elif field.name == 'create_time' %}
+                                            <i class="bi bi-calendar-date me-1"></i>
+                                        {% elif field.name == 'gender' %}
+                                            <i class="bi bi-gender-ambiguous me-1"></i>
+                                        {% elif field.name == 'depart' %}
+                                            <i class="bi bi-building me-1"></i>
+                                        {% else %}
+                                            <i class="bi bi-info-circle me-1"></i>
+                                        {% endif %}
+                                        {{ field.label }}
+                                    </label>
+                                    
+                                    {% if field.field.widget.input_type == 'select' %}
+                                        <select name="{{ field.name }}" 
+                                                id="{{ field.id_for_label }}" 
+                                                class="form-select form-select-lg"
+                                                {% if field.field.required %}required{% endif %}>
+                                            {% for choice in field.field.choices %}
+                                                <option value="{{ choice.0 }}" 
+                                                        {% if choice.0 == field.value %}selected{% endif %}>
+                                                    {{ choice.1 }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    {% elif field.field.widget.input_type == 'password' %}
+                                        <input type="password" 
+                                               name="{{ field.name }}" 
+                                               id="{{ field.id_for_label }}" 
+                                               class="form-control form-control-lg" 
+                                               value="{{ field.value|default:'' }}"
+                                               {% if field.field.required %}required{% endif %}>
+                                    {% elif field.field.widget.input_type == 'number' %}
+                                        <input type="number" 
+                                               name="{{ field.name }}" 
+                                               id="{{ field.id_for_label }}" 
+                                               class="form-control form-control-lg" 
+                                               value="{{ field.value|default:'' }}"
+                                               {% if field.field.required %}required{% endif %}>
+                                    {% elif field.name == 'create_time' %}
+                                        <input type="text" 
+                                               name="{{ field.name }}" 
+                                               id="{{ field.id_for_label }}" 
+                                               class="form-control form-control-lg" 
+                                               value="{{ field.value|default:'' }}"
+                                               placeholder="请选择日期"
+                                               readonly
+                                               {% if field.field.required %}required{% endif %}>
+                                    {% else %}
+                                        <input type="text" 
+                                               name="{{ field.name }}" 
+                                               id="{{ field.id_for_label }}" 
+                                               class="form-control form-control-lg" 
+                                               value="{{ field.value|default:'' }}"
+                                               {% if field.field.required %}required{% endif %}>
+                                    {% endif %}
+                                    
+                                    {% if field.errors %}
+                                        <div class="error-message mt-2">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ field.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% if field.help_text %}
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            {{ field.help_text }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- 每两个字段换行 -->
+                                {% if forloop.counter|divisibleby:2 %}
+                                    </div><div class="row">
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-end mt-4">
+                            <a href="/user/list/" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left me-2"></i>
+                                返回列表
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>
+                                创建用户
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* 表单控件焦点效果 */
+.form-control:focus,
+.form-select:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15);
+}
+
+/* 按钮悬停效果 */
+.btn:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #146c43 0%, #0f5132 100%);
+    box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+}
+
+/* 卡片悬停效果 */
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transition: box-shadow 0.3s ease;
+}
+
+/* 面包屑样式 */
+.breadcrumb {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #198754;
+}
+
+/* 表单标签样式 */
+.form-label {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* 错误信息样式 */
+.error-message {
+    color: #dc3545;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+}
+
+/* 表单提示文字 */
+.form-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* 渐变背景 */
+.bg-gradient-success {
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .d-flex.gap-3 {
+        flex-direction: column;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+    <script>
+        $(function () {
+            $('#id_create_time').datetimepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '0',
+                language: "zh-CN",
+                autoclose: true
+            });
+        })
+    </script>
+
+{% endblock %}

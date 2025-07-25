@@ -1,0 +1,338 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container-fluid">
+        <!-- 欢迎横幅 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-gradient text-white border-0 shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="card-body p-5">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h1 class="display-4 fw-bold mb-3">
+                                    <i class="bi bi-house-heart me-3"></i>
+                                    欢迎使用管理系统
+                                </h1>
+                                <p class="lead mb-0">
+                                    高效管理，智能决策 - 您的企业数字化管理平台
+                                </p>
+                                <small class="text-white-50">
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    今天是 <span id="currentDate"></span>
+                                </small>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="dashboard-icon">
+                                    <i class="bi bi-speedometer2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 快速导航 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="text-primary mb-3">
+                    <i class="bi bi-compass me-2"></i>
+                    快速导航
+                </h3>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card h-100 border-0 shadow-sm nav-card" data-bs-toggle="tooltip" title="管理系统用户">
+                    <div class="card-body text-center p-4">
+                        <div class="nav-icon bg-primary">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <h5 class="card-title mt-3 mb-2">用户管理</h5>
+                        <p class="card-text text-muted small">添加、编辑和管理系统用户</p>
+                        <a href="/user/list/" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-arrow-right me-1"></i>
+                            进入管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card h-100 border-0 shadow-sm nav-card" data-bs-toggle="tooltip" title="管理组织架构">
+                    <div class="card-body text-center p-4">
+                        <div class="nav-icon bg-success">
+                            <i class="bi bi-building"></i>
+                        </div>
+                        <h5 class="card-title mt-3 mb-2">部门管理</h5>
+                        <p class="card-text text-muted small">组织架构和部门设置</p>
+                        <a href="/depart/list/" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-arrow-right me-1"></i>
+                            进入管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card h-100 border-0 shadow-sm nav-card" data-bs-toggle="tooltip" title="订单业务管理">
+                    <div class="card-body text-center p-4">
+                        <div class="nav-icon bg-warning">
+                            <i class="bi bi-cart-check-fill"></i>
+                        </div>
+                        <h5 class="card-title mt-3 mb-2">订单管理</h5>
+                        <p class="card-text text-muted small">订单处理和业务跟踪</p>
+                        <a href="/order/list/" class="btn btn-outline-warning btn-sm">
+                            <i class="bi bi-arrow-right me-1"></i>
+                            进入管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card h-100 border-0 shadow-sm nav-card" data-bs-toggle="tooltip" title="系统管理员">
+                    <div class="card-body text-center p-4">
+                        <div class="nav-icon bg-danger">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h5 class="card-title mt-3 mb-2">管理员</h5>
+                        <p class="card-text text-muted small">系统管理员权限设置</p>
+                        <a href="/admin/list/" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-arrow-right me-1"></i>
+                            进入管理
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能模块 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3 class="text-primary mb-3">
+                    <i class="bi bi-grid-3x3-gap me-2"></i>
+                    功能模块
+                </h3>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="card border-0 shadow-sm feature-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon bg-info me-3">
+                                <i class="bi bi-bar-chart-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-1">数据分析</h5>
+                                <small class="text-muted">图表和统计</small>
+                            </div>
+                        </div>
+                        <p class="card-text text-muted">查看业务数据图表，分析趋势和统计信息</p>
+                        <a href="/chart/list/" class="btn btn-info btn-sm">
+                            <i class="bi bi-graph-up me-1"></i>
+                            查看图表
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="card border-0 shadow-sm feature-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon bg-secondary me-3">
+                                <i class="bi bi-list-task"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-1">任务管理</h5>
+                                <small class="text-muted">待办事项</small>
+                            </div>
+                        </div>
+                        <p class="card-text text-muted">管理日常任务，跟踪工作进度和优先级</p>
+                        <a href="/task/list/" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-check-square me-1"></i>
+                            管理任务
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="card border-0 shadow-sm feature-card">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="feature-icon bg-dark me-3">
+                                <i class="bi bi-gear-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title mb-1">系统设置</h5>
+                                <small class="text-muted">配置管理</small>
+                            </div>
+                        </div>
+                        <p class="card-text text-muted">系统配置、权限设置和参数管理</p>
+                        <button class="btn btn-dark btn-sm" disabled>
+                            <i class="bi bi-tools me-1"></i>
+                            敬请期待
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 系统状态 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="bi bi-activity me-2"></i>
+                            系统状态
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3">
+                                <div class="status-item">
+                                    <div class="status-icon bg-success">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </div>
+                                    <h6 class="mt-2 mb-1">系统运行</h6>
+                                    <small class="text-success">正常</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="status-item">
+                                    <div class="status-icon bg-primary">
+                                        <i class="bi bi-database-fill"></i>
+                                    </div>
+                                    <h6 class="mt-2 mb-1">数据库</h6>
+                                    <small class="text-primary">连接正常</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="status-item">
+                                    <div class="status-icon bg-info">
+                                        <i class="bi bi-cloud-check-fill"></i>
+                                    </div>
+                                    <h6 class="mt-2 mb-1">服务状态</h6>
+                                    <small class="text-info">运行中</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="status-item">
+                                    <div class="status-icon bg-warning">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                    <h6 class="mt-2 mb-1">安全状态</h6>
+                                    <small class="text-warning">受保护</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* 仪表板图标 */
+        .dashboard-icon {
+            font-size: 4rem;
+            opacity: 0.3;
+        }
+
+        /* 导航卡片 */
+        .nav-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+
+        /* 导航图标 */
+        .nav-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        /* 功能卡片 */
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+        }
+
+        /* 功能图标 */
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        /* 状态项 */
+        .status-item {
+            padding: 1rem;
+        }
+
+        .status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 1.3rem;
+            color: white;
+        }
+
+        /* 按钮悬停效果 */
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .display-4 {
+                font-size: 2rem;
+            }
+            
+            .dashboard-icon {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+
+    <script>
+        // 显示当前日期
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long'
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-CN', options);
+            
+            // 初始化工具提示
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+{% endblock %}

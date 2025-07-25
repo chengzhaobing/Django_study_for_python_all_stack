@@ -1,0 +1,471 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4" style="margin-top: 30px;">
+            <h2 class="text-primary mb-0">
+                <i class="bi bi-graph-up me-2"></i>
+                数据分析仪表板
+            </h2>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active" data-chart="all">
+                    <i class="bi bi-grid-3x3-gap me-1"></i>全部
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-chart="line">
+                    <i class="bi bi-graph-up me-1"></i>折线图
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-chart="bar">
+                    <i class="bi bi-bar-chart me-1"></i>柱状图
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-chart="pie">
+                    <i class="bi bi-pie-chart me-1"></i>饼状图
+                </button>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-12">
+                <div class="card shadow-lg border-0 chart-card" data-chart-type="line">
+                    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5 class="mb-0">
+                            <i class="bi bi-graph-up me-2"></i>
+                            销售趋势分析
+                        </h5>
+                        <small class="opacity-75">过去12个月的销售数据变化趋势</small>
+                    </div>
+                    <div class="card-body">
+                        <div id="m0" style="width: 100%;height: 400px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mt-2">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0 chart-card" data-chart-type="bar">
+                    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <h5 class="mb-0">
+                            <i class="bi bi-bar-chart me-2"></i>
+                            部门业绩对比
+                        </h5>
+                        <small class="opacity-75">各部门月度业绩统计</small>
+                    </div>
+                    <div class="card-body">
+                        <div id="m1" style="width: 100%;height: 400px"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow-lg border-0 chart-card" data-chart-type="pie">
+                    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <h5 class="mb-0">
+                            <i class="bi bi-pie-chart me-2"></i>
+                            市场份额分布
+                        </h5>
+                        <small class="opacity-75">产品类别市场占比分析</small>
+                    </div>
+                    <div class="card-body">
+                        <div id="m2" style="width: 100%;height: 400px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .chart-card {
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+        }
+        
+        .card-header {
+            border: none;
+            padding: 1.5rem;
+        }
+        
+        .btn-group .btn {
+            border-radius: 25px;
+            margin: 0 2px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-group .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-group .btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: white;
+        }
+        
+        .chart-card[data-chart-type] {
+            display: block;
+        }
+        
+        .chart-card.hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                margin: 2px 0;
+                border-radius: 8px;
+            }
+        }
+    </style>
+{% endblock %}
+
+
+{% block js %}
+    <script src="{% static '/js/echarts.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            initLine();// 折线图
+            initBarChart(); // 柱状图
+            initPieChart(); // 饼状图
+            
+            // 图表切换功能
+            $('.btn-group button').click(function() {
+                $('.btn-group button').removeClass('active');
+                $(this).addClass('active');
+                
+                var chartType = $(this).data('chart');
+                
+                if (chartType === 'all') {
+                    $('.chart-card').removeClass('hidden').show();
+                } else {
+                    $('.chart-card').addClass('hidden').hide();
+                    $('.chart-card[data-chart-type="' + chartType + '"]').removeClass('hidden').show();
+                }
+            });
+        });
+
+        /*
+       * 初始化折线图
+       */
+        function initLine() {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('m0'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                color: ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
+                title: {
+                    text: '销售额分布',
+                    subtext: "中国区分公司",
+                    left: 'center', //居中
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                legend: {
+                    data: [],
+                    bottom: 0
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    {#bottom: '3%',#}
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: []
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: 'Line 1',
+                        type: 'line',
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 0
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            opacity: 0.8,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgb(128, 255, 165)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgb(1, 191, 236)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: []
+                    },
+                    {
+                        name: 'Line 2',
+                        type: 'line',
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 0
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            opacity: 0.8,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgb(0, 221, 255)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgb(77, 119, 255)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: []
+                    },
+                    {
+                        name: 'Line 3',
+                        type: 'line',
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 0
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            opacity: 0.8,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgb(55, 162, 255)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgb(116, 21, 219)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: []
+                    },
+                    {
+                        name: 'Line 4',
+                        type: 'line',
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 0
+                        },
+                        showSymbol: false,
+                        areaStyle: {
+                            opacity: 0.8,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgb(255, 0, 135)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgb(135, 0, 157)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: []
+                    },
+                    {
+                        name: 'Line 5',
+                        type: 'line',
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 0
+                        },
+                        showSymbol: false,
+                        label: {
+                            show: true,
+                            position: 'top'
+                        },
+                        areaStyle: {
+                            opacity: 0.8,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgb(255, 191, 0)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgb(224, 62, 76)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: []
+                    }
+                ]
+            };
+
+            $.ajax({
+                url: '/chart/line/',
+                type: 'get',
+                dataType: 'json',
+                success: function (res) {
+                    if (res.status) {
+                        option.series[0].data = res.data.series[0].data;
+                        option.series[1].data = res.data.series[1].data;
+                        option.series[2].data = res.data.series[2].data;
+                        option.series[3].data = res.data.series[3].data;
+                        option.series[4].data = res.data.series[4].data;
+                        option.xAxis[0].data = res.data.x_axis;
+                        option.legend.data = res.data.legend;
+
+                        // 渲染
+                        myChart.setOption(option);
+                    }
+                }
+            });
+
+
+        }
+
+        /**
+         * 初始化柱状图
+         */
+        function initBarChart() {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('m1'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '市场部销量统计',
+                    subtext: '中国分公司', // 副标题
+                    left: 'center'
+                },
+                tooltip: {},
+                legend: {
+                    data: [], // 从后台获取数据
+                    bottom: 5 // 图例位置
+                },
+                xAxis: {
+                    data: [] // 从后台获取数据
+                },
+                yAxis: {},
+                series: [] // 从后台获取数据
+            };
+
+            $.ajax({
+                url: "/chart/bar/",
+                type: "get",
+                dataType: "json",
+                success: function (result) {
+                    // 将后台返回的数据更新到option中
+                    if (result.status) {
+                        option.legend.data = result.data.legend;
+                        option.xAxis.data = result.data.x_axis;
+                        option.series = result.data.series_list;
+
+                        // 使用刚指定的配置项和数据显示图表
+                        myChart.setOption(option);
+                    }
+                }
+            });
+        }
+
+        /**
+         * 初始化饼状图
+         */
+        function initPieChart() {
+            var myChart = echarts.init(document.getElementById('m2'));
+
+            var option = {
+                title: {
+                    text: '年度业绩汇总',
+                    subtext: '中国区分公司',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    bottom: 0
+                },
+                series: [{
+                    name: '金额占比',
+                    type: 'pie',
+                    radius: '50%',
+                    data: [],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }]
+            };
+
+            $.ajax({
+                url: "/chart/pie/",
+                type: "get",
+                dataType: "JSON",
+                success: function (res) {
+                    if (res.status) {
+                        // 将后端数据赋值给饼图
+                        option.series[0].data = res.data;
+                        // 使用配置项和数据显示图表
+                        myChart.setOption(option);
+                    }
+                }
+            });
+        }
+
+    </script>
+{% endblock %}

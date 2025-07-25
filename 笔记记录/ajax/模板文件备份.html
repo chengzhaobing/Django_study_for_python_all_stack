@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-5.0.0/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-icons-1.13.1/bootstrap-icons.min.css' %}">
+    {% block css %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-bottom: 30px">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">国家商业管理系统</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse">
+            <ul class="nav justify-content-center">
+
+                <li><a class="nav-link" href="/admin/list/">管理员账户</a></li>
+                <li><a class="nav-link" href="/depart/list/">部门管理</a></li>
+                <li><a class="nav-link" href="/user/list/">用户管理</a></li>
+                <li><a class="nav-link" href="/task/list/">任务管理</a></li>
+                <li><a class="nav-link" href="/order/list/">订单管理</a></li>
+                <li><a class="nav-link" href="/user/list/">其他</a></li>
+
+            </ul>
+
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+                <li class="nav-item">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+
+                        {#                         # info = request.session['info'] # 把获取当前的登录信息 ---把用户名实时传送到模板中，显示各自的登录名#}
+                        {{ request.session.info.name }}
+
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#">个人资料</a></li>
+                        <li><a class="dropdown-item" href="#">我的信息</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="/logout/">注销</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    {% block content %}{% endblock %}
+</div>
+
+
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-5.0.0/js/bootstrap.min.js' %}"></script>
+
+{% block js %}{% endblock %}
+
+</body>
+</html>

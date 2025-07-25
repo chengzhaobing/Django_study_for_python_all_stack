@@ -1,0 +1,256 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <!-- 面包屑导航 -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/index/"><i class="bi bi-house-door"></i> 首页</a></li>
+            <li class="breadcrumb-item"><a href="/user/list/">用户管理</a></li>
+            <li class="breadcrumb-item active" aria-current="page">新建用户</li>
+        </ol>
+    </nav>
+
+    <!-- 页面标题 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="bi bi-person-plus text-primary me-2"></i>
+            新建用户
+        </h2>
+    </div>
+
+    <!-- 表单卡片 -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-circle me-2"></i>
+                        用户信息
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="name" class="form-label fw-bold">
+                                    <i class="bi bi-person me-1"></i>
+                                    姓名
+                                </label>
+                                <input type="text" 
+                                       id="name"
+                                       name="name" 
+                                       class="form-control form-control-lg" 
+                                       placeholder="请输入姓名"
+                                       required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="sex" class="form-label fw-bold">
+                                    <i class="bi bi-gender-ambiguous me-1"></i>
+                                    性别
+                                </label>
+                                <select id="sex" class="form-select form-select-lg" name="sex">
+                                    {% for item in sex_choice %}
+                                        <option value="{{ item.0 }}">{{ item.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="age" class="form-label fw-bold">
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    年龄
+                                </label>
+                                <input type="number" 
+                                       id="age"
+                                       name="age" 
+                                       class="form-control form-control-lg" 
+                                       placeholder="请输入年龄"
+                                       min="18" max="65">
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="money" class="form-label fw-bold">
+                                    <i class="bi bi-wallet2 me-1"></i>
+                                    账户额度
+                                </label>
+                                <input type="number" 
+                                       id="money"
+                                       name="money" 
+                                       class="form-control form-control-lg" 
+                                       placeholder="请输入账户额度"
+                                       step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="dt" class="form-label fw-bold">
+                                    <i class="bi bi-calendar-date me-1"></i>
+                                    入职时间
+                                </label>
+                                <input id="dt" 
+                                       type="text" 
+                                       name="time" 
+                                       class="form-control form-control-lg" 
+                                       placeholder="请选择入职时间"
+                                       readonly>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label for="depart" class="form-label fw-bold">
+                                    <i class="bi bi-building me-1"></i>
+                                    部门
+                                </label>
+                                <select id="depart" class="form-select form-select-lg" name="depart">
+                                    <option value="">请选择部门</option>
+                                    {% for item in depart_list %}
+                                        <option value="{{ item.id }}">{{ item.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="pwd" class="form-label fw-bold">
+                                <i class="bi bi-lock me-1"></i>
+                                密码
+                            </label>
+                            <input type="password" 
+                                   id="pwd"
+                                   name="pwd" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="请输入密码"
+                                   required>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                密码长度至少6位，建议包含字母和数字
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a href="/user/list/" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left me-2"></i>
+                                返回列表
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>
+                                创建用户
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* 表单控件焦点效果 */
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+/* 按钮悬停效果 */
+.btn:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #146c43 0%, #0f5132 100%);
+    box-shadow: 0 4px 8px rgba(25, 135, 84, 0.3);
+}
+
+/* 卡片悬停效果 */
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    transition: box-shadow 0.3s ease;
+}
+
+/* 面包屑样式 */
+.breadcrumb {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #0d6efd;
+}
+
+/* 表单标签样式 */
+.form-label {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* 表单提示文字 */
+.form-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* 渐变背景 */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .d-flex.gap-3 {
+        flex-direction: column;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block js %}
+    <script src="{% static 'plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js' %}"></script>
+    <script>
+        $(function () {
+            $('#dt').datepicker({
+                format: 'yyyy-mm-dd',
+                startDate: '0',
+                language: "zh-CN",
+                autoclose: true
+            });
+        })
+    </script>
+
+{% endblock %}

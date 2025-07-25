@@ -1,0 +1,146 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container-fluid">
+        <!-- 页面标题 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary mb-0">
+                <i class="bi bi-person-gear me-2"></i>
+                编辑用户信息
+            </h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/user/list/" class="text-decoration-none">用户管理</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">编辑用户</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- 编辑表单 -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);">
+                        <h5 class="mb-0">
+                            <i class="bi bi-pencil-square me-2"></i>
+                            用户信息编辑
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            <div class="row">
+                                {% for field in form %}
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">
+                                            <i class="bi bi-{{ field.name|default:'info-circle' }} me-1"></i>
+                                            {{ field.label }}
+                                        </label>
+                                        {% if field.name == 'gender' %}
+                                            <select class="form-select form-select-lg" name="{{ field.name }}" id="{{ field.id_for_label }}">
+                                                {% for choice in field.field.choices %}
+                                                    <option value="{{ choice.0 }}" {% if choice.0 == field.value %}selected{% endif %}>
+                                                        {{ choice.1 }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        {% elif field.name == 'depart' %}
+                                            <select class="form-select form-select-lg" name="{{ field.name }}" id="{{ field.id_for_label }}">
+                                                {% for choice in field.field.queryset %}
+                                                    <option value="{{ choice.id }}" {% if choice.id == field.value %}selected{% endif %}>
+                                                        {{ choice.title }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        {% elif field.name == 'create_time' %}
+                                            <input type="date" class="form-control form-control-lg" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{ field.value|date:'Y-m-d' }}">
+                                        {% else %}
+                                            <input type="{% if field.name == 'password' %}password{% elif field.name == 'age' or field.name == 'account' %}number{% else %}text{% endif %}" 
+                                                   class="form-control form-control-lg" 
+                                                   name="{{ field.name }}" 
+                                                   id="{{ field.id_for_label }}" 
+                                                   value="{{ field.value|default:'' }}" 
+                                                   placeholder="请输入{{ field.label }}">
+                                        {% endif %}
+                                        {% if field.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                                {{ field.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="d-flex justify-content-end gap-3 mt-4">
+                                <a href="/user/list/" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    返回列表
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    保存修改
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* 表单控件焦点效果 */
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        /* 按钮悬停效果 */
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+
+        /* 卡片悬停效果 */
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            transition: all 0.3s ease;
+        }
+
+        /* 面包屑导航样式 */
+        .breadcrumb-item a {
+            color: #007bff;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #0056b3;
+        }
+
+        /* 表单标签样式 */
+        .form-label {
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 错误信息样式 */
+        .invalid-feedback {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .col-md-6 {
+                margin-bottom: 1rem;
+            }
+            
+            .d-flex.gap-3 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+        }
+    </style>
+{% endblock %}

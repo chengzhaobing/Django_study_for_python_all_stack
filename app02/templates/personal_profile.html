@@ -1,0 +1,438 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px 0;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+        opacity: 0.3;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        color: white;
+        margin: 0 auto 20px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        position: relative;
+        z-index: 1;
+    }
+    
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .stats-label {
+        color: #6c757d;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.9rem;
+    }
+    
+    .info-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+    }
+    
+    .info-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 15px;
+        font-size: 18px;
+    }
+    
+    .info-content {
+        flex: 1;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .info-value {
+        color: #6c757d;
+        font-size: 0.95rem;
+    }
+    
+    .recent-activity {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 15px;
+        font-size: 14px;
+    }
+    
+    .activity-content {
+        flex: 1;
+    }
+    
+    .activity-title {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 3px;
+    }
+    
+    .activity-time {
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 25px;
+        position: relative;
+        padding-left: 20px;
+    }
+    
+    .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 25px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 2px;
+    }
+    
+    .edit-profile-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .edit-profile-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- 个人资料头部 -->
+    <div class="profile-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center">
+                    <div class="profile-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h2 class="mb-2" style="position: relative; z-index: 1;">{{ user_info.username }}</h2>
+                    <p class="mb-3" style="opacity: 0.9; position: relative; z-index: 1;">系统管理员</p>
+                    <p class="mb-0" style="opacity: 0.8; position: relative; z-index: 1;">
+                        <i class="bi bi-calendar-event me-2"></i>
+                        加入时间: {{ user_info.create_time|date:"Y年m月d日" }}
+                    </p>
+                </div>
+                <div class="col-md-3 text-end">
+                    <button class="btn edit-profile-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                        <i class="bi bi-pencil-square me-2"></i>编辑资料
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 统计数据 -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ user_stats.total_tasks }}</div>
+                <div class="stats-label">总任务数</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ user_stats.urgent_tasks }}</div>
+                <div class="stats-label">紧急任务</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ user_stats.important_tasks }}</div>
+                <div class="stats-label">重要任务</div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stats-card">
+                <div class="stats-number">{{ user_stats.total_orders }}</div>
+                <div class="stats-label">订单数</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- 个人信息 -->
+        <div class="col-md-6 mb-4">
+            <div class="info-card">
+                <h4 class="section-title">个人信息</h4>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">用户名</div>
+                        <div class="info-value">{{ user_info.username }}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">用户ID</div>
+                        <div class="info-value">#{{ user_info.id }}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="bi bi-calendar-plus"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">注册时间</div>
+                        <div class="info-value">{{ user_info.create_time|date:"Y年m月d日 H:i" }}</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-icon">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">最后登录</div>
+                        <div class="info-value">{{ user_info.create_time|date:"Y年m月d日 H:i" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 最近活动 -->
+        <div class="col-md-6 mb-4">
+            <div class="recent-activity">
+                <h4 class="section-title">最近任务</h4>
+                {% for task in recent_tasks %}
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="bi bi-list-task"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">{{ task.title }}</div>
+                        <div class="activity-time">
+                            优先级: 
+                            {% if task.level == 1 %}
+                                <span class="badge bg-danger">高</span>
+                            {% elif task.level == 2 %}
+                                <span class="badge bg-warning">中</span>
+                            {% else %}
+                                <span class="badge bg-success">低</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-inbox" style="font-size: 3rem; opacity: 0.3;"></i>
+                    <p class="mt-2">暂无任务记录</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- 最近订单 -->
+    <div class="row">
+        <div class="col-12">
+            <div class="recent-activity">
+                <h4 class="section-title">最近订单</h4>
+                <div class="row">
+                    {% for order in recent_orders %}
+                    <div class="col-md-6 mb-3">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="bi bi-cart-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">订单 #{{ order.oid }}</div>
+                                <div class="activity-time">
+                                    金额: ¥{{ order.price }} | 状态: 
+                                    {% if order.status == 1 %}
+                                        <span class="badge bg-warning">待付款</span>
+                                    {% elif order.status == 2 %}
+                                        <span class="badge bg-success">已付款</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">已取消</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-cart-x" style="font-size: 3rem; opacity: 0.3;"></i>
+                            <p class="mt-2">暂无订单记录</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑资料模态框 -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">编辑个人资料</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <div class="mb-3">
+                        <label class="form-label">用户名</label>
+                        <input type="text" class="form-control" name="username" value="{{ user_info.username }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">用户ID</label>
+                        <input type="text" class="form-control" value="#{{ user_info.id }}" readonly>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="saveProfile">保存更改</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    // 保存个人资料
+    $('#saveProfile').click(function() {
+        $.ajax({
+            url: '/profile/update/',
+            type: 'POST',
+            data: $('#editProfileForm').serialize(),
+            dataType: 'JSON',
+            success: function(res) {
+                if (res.status) {
+                    alert('更新成功！');
+                    location.reload();
+                } else {
+                    alert('更新失败：' + res.error);
+                }
+            },
+            error: function() {
+                alert('网络错误，请稍后重试');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

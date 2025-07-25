@@ -1,0 +1,516 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4" style="margin-top: 30px;">
+            <h2 class="text-primary mb-0">
+                <i class="bi bi-cart-check me-2"></i>
+                订单管理
+            </h2>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-success btn-lg shadow-sm" data-bs-toggle="modal" data-bs-target="#myModal">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    添加订单(模态框)
+                </button>
+                <button id="btnAdd" type="button" class="btn btn-outline-success btn-lg shadow-sm">
+                    <i class="bi bi-plus-square me-2"></i>
+                    添加订单(JS)
+                </button>
+            </div>
+        </div>
+
+
+        {#  模态框 ---- 新建/编辑对话框 #}
+        <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-gradient text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5 class="modal-title" id="ModalLabel">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            新建订单
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+
+                        <form id="formAdd" method="post" novalidate>
+                            <div class="row g-3">
+                                {% for field in form %}
+                                    <div class="col-md-6">
+                                        <div class="form-floating position-relative">
+                                            {{ field }}
+                                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                            <div class="invalid-feedback error-msg"></div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer border-0 p-4">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i>关 闭
+                        </button>
+                        <button id="btnSave" type="button" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i>保 存
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 模态框 ---- 删除对话框 -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="deleteModalLabel">
+                            <i class="bi bi-exclamation-triangle"></i> 确认删除
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-warning"></i>
+                            <strong>警告：</strong>此操作将永久删除所有关联数据，无法恢复！
+                        </div>
+                        <p class="mb-0">您确定要删除这条订单记录吗？</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> 取消
+                        </button>
+                        <button id="btnConfirmDelete" type="button" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> 确认删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-gradient text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-check me-2"></i>
+                    订单列表
+                </h5>
+                <div class="search-container">
+                    <form class="d-flex" method="get">
+                        <div class="input-group">
+                            <input name="q" value="{{ search_data }}" class="form-control form-control-lg"
+                                   style="width: 300px;" type="search" placeholder="搜索订单号、名称..."
+                                   aria-label="Search">
+                            <button class="btn btn-light" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="text-center">
+                                <i class="bi bi-hash me-1"></i>ID
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-receipt me-1"></i>订单号
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-tag me-1"></i>订单名称
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-currency-dollar me-1"></i>价格
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-flag me-1"></i>订单状态
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-person-badge me-1"></i>负责人
+                            </th>
+                            <th scope="col" class="text-center">
+                                <i class="bi bi-gear me-1"></i>操作
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for obj in queryset %}
+                            <tr uid="{{ obj.id }}" class="align-middle">
+                                <td class="text-center fw-bold text-primary">{{ obj.id }}</td>
+                                <td>
+                                    <code class="text-primary">{{ obj.oid }}</code>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold">{{ obj.title }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-success fw-bold">
+                                        <i class="bi bi-currency-dollar"></i>{{ obj.price }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if obj.get_status_display == '待处理' %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-clock me-1"></i>{{ obj.get_status_display }}
+                                        </span>
+                                    {% elif obj.get_status_display == '进行中' %}
+                                        <span class="badge bg-primary">
+                                            <i class="bi bi-play-circle me-1"></i>{{ obj.get_status_display }}
+                                        </span>
+                                    {% elif obj.get_status_display == '已完成' %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>{{ obj.get_status_display }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">
+                                            {{ obj.get_status_display }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle-sm me-2">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                        <span>{{ obj.admin.username }}</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <button uid="{{ obj.id }}" class="btn btn-outline-primary btn-sm btn-edit" title="编辑订单">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button uid="{{ obj.id }}" class="btn btn-outline-danger btn-sm btn-delete" title="删除订单">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                </table>
+            </div>
+            
+            <!-- 分页导航 -->
+            <div class="card-footer bg-light border-0">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        {{ page_string }}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    <style>
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom: none;
+        }
+        
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+        }
+        
+        .avatar-circle-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-group .btn {
+            transition: all 0.2s ease;
+        }
+        
+        .btn-group .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .search-container .form-control:focus {
+            border-color: rgba(255,255,255,0.5);
+            box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+        
+        .pagination .page-link {
+            border: none;
+            margin: 0 2px;
+            border-radius: 8px;
+            color: #667eea;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        
+        .pagination .page-link:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+    </style>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+
+        var DELETE_ID;
+        var EDIT_ID;
+
+        $(function () {
+            bindBtnAddEvent();
+            bindBtnSaveEvent();
+            bindBtnDeleteEvent();
+            bindBtnConfirmDeleteEvent();
+            bindBtnEditEvent();
+        })
+
+        function bindBtnAddEvent() {
+            $("#btnAdd").click(function () {
+                //点击按钮，显示对话框
+                {#var myModal = new bootstrap.Modal(document.getElementById('myModal'));#}
+                {#myModal.show();#}
+
+                // 将正在编辑的ID设置为空
+                EDIT_ID = undefined;
+
+                // 清空对话框中的数据
+                $("#formAdd")[0].reset();
+
+                // 设置对话框标题
+                $("#ModalLabel").text("新建订单");
+
+                // 点击新建，显示对话框
+                $("#myModal").modal("show");
+            });
+        }
+
+        function bindBtnSaveEvent() {
+            $("#btnSave").click(function () {
+                // 清楚所有错误信息 (点击保存后，错误信息就消失）
+                $(".error-msg").empty();
+
+                if(EDIT_ID){
+                    //编辑
+                    doEdit();
+                }else{
+                    //添加
+                    doAdd();
+                }
+
+
+            })
+        }
+
+        function doEdit() {
+            $.ajax({
+                url: "/order/edit/" + "?uid=" + EDIT_ID,
+                type: "POST",
+                data: $("#formAdd").serialize(),
+                dataType: "json",
+                success: function (res) {
+                    if (res.status) {
+                        //清空表单 ---$("#formAdd")是JQuery对象---$("#formAdd")[0]转DOM对象--只有DOM对象提供重置方法
+                        $("#formAdd")[0].reset();
+
+
+                        // 输入完关闭模态对话框--show显示---hide隐藏
+                        var myModal = bootstrap.Modal.getInstance(document.getElementById('myModal'));
+                        myModal.hide();
+
+                        // 关闭对话框后刷新页面
+                        location.reload();
+
+                    } else {
+                        if (res.tips) {
+                            alert(res.tips);
+                        } else {
+                            // 把错误信息显示在对话框中
+                            $.each(res.error, function (name, errorList) {
+                                $("#id_" + name).next().text(errorList[0]);
+
+                            })
+                        }
+                    }
+                }
+            })
+        }
+
+        function doAdd() {
+                //向后台发送请求 (添加订单的Ajax请求)
+                $.ajax({
+                    url: "/order/add/",
+                    type: "POST",
+                    data: $("#formAdd").serialize(),
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.status) {
+                            {#alert("添加成功");#}
+                            //清空表单 ---$("#formAdd")是JQuery对象---$("#formAdd")[0]转DOM对象--只有DOM对象提供重置方法
+                            $("#formAdd")[0].reset();
+
+                            // 输入完关闭模态对话框--show显示---hide隐藏
+                            var myModal = bootstrap.Modal.getInstance(document.getElementById('myModal'));
+                            myModal.hide();
+
+                            // 关闭对话框后刷新页面
+                            location.reload();
+                        } else {
+                            // 把错误信息显示在对话框中
+                            $.each(res.error, function (name, errorList) {
+                                $("#id_" + name).next().text(errorList[0]);
+                            })
+                        }
+                    }
+                });
+            }
+
+        function bindBtnDeleteEvent() {
+                $(".btn-delete").click(function () {
+                    // 获取当前行id赋值给全局变量
+                    DELETE_ID = $(this).attr("uid");
+
+                    // 显示对话框
+                    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                    deleteModal.show();
+                });
+            }
+
+        function bindBtnConfirmDeleteEvent() {
+                $("#btnConfirmDelete").click(function () {
+                    // 点击删除按钮，将全局变量中那个要删除的行的id 发送给后台（后端）
+                    $.ajax({
+                        url: "/order/delete/",
+                        type: "GET",
+                        data: {
+                            uid: DELETE_ID
+                        },
+                        dataType: "JSON",
+                        success: function (res) {
+                            if (res.status) {
+                                // 先关闭模态框
+                                var deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                                deleteModal.hide();
+                                // 显示成功提示
+                                alert("删除成功！");
+                                // 延迟刷新页面，确保用户看到提示
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 500);
+                            } else {
+                                // 删除失败
+                                alert(res.error);
+                            }
+                        },
+                        error: function () {
+                            alert("删除请求失败，请重试！");
+                        }
+                    })
+                })
+            }
+
+        function bindBtnEditEvent() {
+                $(".btn-edit").click(function () {
+                    // 清空对话框中的数据
+                    $("#formAdd")[0].reset();
+                    var uid = $(this).attr("uid");
+                    EDIT_ID = uid;
+                    // 发送Ajax去后台获取当前行的相关数据
+                    $.ajax({
+                        url: "/order/detail/",
+                        type: "get",
+                        data: {
+                            uid: uid
+                        },
+                        dataType: "json",
+                        success: function (res) {
+                            // 取的是order_detail定义的的status
+                            if (res.status) {
+                                //console.log(res.data);
+                                $.each(res.data, function (name, value) {
+                                    $("#id_" + name).val(value);//找到input框--val框内传值
+                                })
+                                //修改对话框标题
+                                $("#ModalLabel").text("编辑订单")
+                                // 点击编辑显示对话框
+                                $("#myModal").modal("show");
+
+                            } else {
+                                alert(res.error);//order_detail函数的error值
+                            }
+                        }
+                    })
+                    // 在对话框中显示编辑的默认数据
+
+                })
+            }
+
+    </script>
+
+{% endblock %}

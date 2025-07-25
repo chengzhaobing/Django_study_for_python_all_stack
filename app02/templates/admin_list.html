@@ -1,0 +1,188 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="container">
+        <!-- 页面标题和操作按钮 -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary mb-0">
+                <i class="bi bi-shield-check me-2"></i>
+                管理员中心
+            </h2>
+            <div class="btn-group" role="group">
+                <a class="btn btn-success btn-lg" href="/admin/add/">
+                    <i class="bi bi-person-plus me-2"></i>
+                    新建管理员
+                </a>
+            </div>
+        </div>
+
+        <!-- 管理员列表 -->
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-gradient text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #dc3545 0%, #6f42c1 100%);">
+                <h5 class="mb-0">
+                    <i class="bi bi-people-fill me-2"></i>
+                    管理员列表
+                </h5>
+                <div class="search-container">
+                    <form class="d-flex" method="get">
+                        <div class="input-group">
+                            <input name="q" value="{{ search_data }}" class="form-control form-control-lg"
+                                   style="width: 300px;" type="search" placeholder="搜索管理员用户名..."
+                                   aria-label="Search">
+                            <button class="btn btn-light" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="text-center">
+                                <i class="bi bi-hash me-1"></i>ID
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-person-badge me-1"></i>用户名
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-key me-1"></i>密码状态
+                            </th>
+                            <th scope="col" class="text-center">
+                                <i class="bi bi-arrow-clockwise me-1"></i>重置密码
+                            </th>
+                            <th scope="col" class="text-center">
+                                <i class="bi bi-gear me-1"></i>操作
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for obj in queryset %}
+                            <tr class="align-middle">
+                                <td class="text-center fw-bold text-primary">{{ obj.id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="admin-avatar me-3">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                        <div>
+                                            <span class="fw-semibold fs-5">{{ obj.username }}</span>
+                                            <div class="text-muted small">
+                                                <i class="bi bi-shield-check me-1"></i>
+                                                管理员账户
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-lock-fill me-1"></i>
+                                        已加密
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <a class="btn btn-warning btn-sm" href="/admin/{{ obj.id }}/reset/" title="重置密码">
+                                        <i class="bi bi-arrow-clockwise me-1"></i>
+                                        重置
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a class="btn btn-outline-primary btn-sm" href="/admin/{{ obj.id }}/edit/" title="编辑管理员">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a class="btn btn-outline-danger btn-sm" href="/admin/{{ obj.id }}/delete/" title="删除管理员">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <ul class="pagination">
+            {{ page_string }}
+        </div>
+
+    </div>
+
+    <style>
+        /* 管理员头像样式 */
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #dc3545 0%, #6f42c1 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        /* 表格行悬停效果 */
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+
+        /* 按钮组悬停效果 */
+        .btn-group .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+
+        /* 搜索框焦点效果 */
+        .search-container .form-control:focus {
+            border-color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+        }
+
+        /* 卡片悬停效果 */
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+            transition: all 0.3s ease;
+        }
+
+        /* 分页链接样式 */
+        .pagination .page-link {
+            border-radius: 8px;
+            margin: 0 2px;
+            border: none;
+            color: #6f42c1;
+            font-weight: 500;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #6f42c1;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        /* 徽章样式 */
+        .badge {
+            font-size: 0.75em;
+            padding: 0.5em 0.75em;
+        }
+
+        /* 表单标签样式 */
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+{% endblock %}

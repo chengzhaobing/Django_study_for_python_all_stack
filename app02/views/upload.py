@@ -1,0 +1,42 @@
+# 内置
+from django.http import HttpResponse
+# 第三方
+from django.shortcuts import render
+from django import forms
+# 自定义
+
+
+
+class UploadForm(forms.Form):
+    name = forms.CharField(label="姓名")
+    age = forms.IntegerField(label="年龄")
+    img = forms.FileField(label="头像")
+
+
+def upload_list(request):
+    """ 文件上传 """
+    if request.method == "GET":
+        return render(request,"upload_list.html")
+
+    # print(request.POST) # 请求体中的数据
+    # print(request.FILES) # 请求发过来的文件
+
+    file_obj = request.FILES["upload_file"] # upload_file 为上传文件的input框
+    print(file_obj.name) # 取文件名
+
+    # f =open(file_obj.name, "wb") # file_obj.name 指使用上传的源文件名
+    f = open('f1.png', mode='wb') # 分块写入的位置（未指定：根目录）/写入的名称 --- 默认文件根目录
+    for chunk in file_obj.chunks(): # 文件对象分块
+        f.write(chunk) # 分块写入
+    f.close() #写入完成关闭
+
+    return HttpResponse("ok")
+
+def upload_form(request):
+    if request.method == "GET":
+        form = UploadForm()
+        context = {
+            "title":"Form上传",
+            "form": form
+        }
+        return render(request, 'upload_form.html',)

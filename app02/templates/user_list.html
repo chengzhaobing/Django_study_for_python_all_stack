@@ -1,0 +1,188 @@
+{% extends 'layout.html' %}
+
+
+{% block content %}
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4" style="margin-top: 30px;">
+            <h2 class="text-primary mb-0">
+                <i class="bi bi-people-fill me-2"></i>
+                用户管理
+            </h2>
+            <div>
+                <a class="btn btn-success btn-lg shadow-sm me-2" href="/user/add/">
+                    <i class="bi bi-person-plus-fill me-2"></i>
+                    新建用户
+                </a>
+                <a class="btn btn-success btn-lg shadow-sm" href="/user/model/add/">
+                    <i class="bi bi-database-add me-2"></i>
+                    新建用户ModelForm
+                </a>
+            </div>
+        </div>
+
+
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header bg-gradient text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h5 class="mb-0">
+                    <i class="bi bi-table me-2"></i>
+                    用户列表
+                </h5>
+                <div class="search-container">
+                    <form class="d-flex" method="get">
+                        <div class="input-group">
+                            <input name="q" value="{{ search_data }}" class="form-control form-control-lg"
+                                   style="width: 300px;" type="search" placeholder="搜索用户姓名、部门..."
+                                   aria-label="Search">
+                            <button class="btn btn-light" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="text-center">
+                                <i class="bi bi-hash me-1"></i>ID
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-person me-1"></i>姓名
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-gender-ambiguous me-1"></i>性别
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-calendar me-1"></i>年龄
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-key me-1"></i>密码
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-building me-1"></i>所属部门
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-currency-dollar me-1"></i>账户余额
+                            </th>
+                            <th scope="col">
+                                <i class="bi bi-calendar-check me-1"></i>入职时间
+                            </th>
+                            <th scope="col" class="text-center">
+                                <i class="bi bi-gear me-1"></i>操作
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for obj in queryset %}
+                            <tr class="align-middle">
+                                {% csrf_token %}
+                                <td class="text-center fw-bold text-primary">{{ obj.id }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-2">
+                                            <i class="bi bi-person-fill"></i>
+                                        </div>
+                                        <span class="fw-semibold">{{ obj.name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if obj.get_sex_display == '男' %}
+                                        <span class="badge bg-primary">
+                                            <i class="bi bi-gender-male me-1"></i>{{ obj.get_sex_display }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-gender-female me-1"></i>{{ obj.get_sex_display }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ obj.age }}岁</span>
+                                </td>
+                                <td>
+                                    <code class="text-muted">{{ obj.password|truncatechars:8 }}...</code>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info text-dark">
+                                        <i class="bi bi-building me-1"></i>{{ obj.depart.title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-success fw-bold">
+                                        <i class="bi bi-currency-dollar"></i>{{ obj.salary }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar3 me-1"></i>{{ obj.create_time | date:"Y-m-d" }}
+                                    </small>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a class="btn btn-outline-primary btn-sm" href="/user/{{ obj.id }}/edit/" title="编辑用户">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a class="btn btn-outline-danger btn-sm" href="/user/{{ obj.id }}/delete/" title="删除用户" onclick="return confirm('确定要删除该用户吗？')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="card-footer bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        共 {{ queryset|length }} 条记录
+                    </small>
+                    <nav aria-label="用户列表分页">
+                        <ul class="pagination pagination-sm mb-0">
+                            {{ page_string }}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .avatar-circle {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+        
+        .btn-group .btn {
+            margin: 0 2px;
+        }
+        
+        .search-container .form-control:focus {
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+        }
+    </style>
+{% endblock %}
