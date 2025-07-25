@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>国家商业管理信息系统</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
+    <link rel="alternate icon" href="{% static 'favicon.svg' %}">
+    <link rel="mask-icon" href="{% static 'favicon.svg' %}" color="#4361ee">
+    <meta name="theme-color" content="#4361ee">
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-5.0.0/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-icons-1.13.1/bootstrap-icons.min.css' %}">
     <style>
@@ -327,6 +331,9 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="/profile/">个人资料</a></li>
                     <li><a class="dropdown-item" href="/my-info/">我的信息</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/learning-summary/"><i class="fas fa-book-open me-2"></i>学习总结</a></li>
+                    <li><a class="dropdown-item" href="/code-guide/"><i class="fas fa-code me-2"></i>代码说明</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/logout/">注销</a></li>
                 </ul>
