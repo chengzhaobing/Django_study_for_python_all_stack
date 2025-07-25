@@ -1,15 +1,26 @@
+from tkinter.font import names
+
+from django.urls import path,re_path
+from django.views.static import serve
+from django.conf import settings
+
 
 from django.contrib import admin
 from django.urls import path
+
 
 from app02 import views
 
 # 因为这里我把原本views.py删掉了----自己新建了一个views文件夹，把不同的部分进行了拆分
 # 所以这里需要更改path
-from app02.views import depart, user, admin, account, task, order, chart, upload, profile, learning
+from app02.views import (depart, user, admin, account, task, order,
+                         chart, upload, profile, learning, city)
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
+
+    re_path(r'^media/(?P<path>.*)$',serve,{'document_root': settings.MEDIA_ROOT}, name='media'),
+
 
     # 首页
     path('', account.login),  # 根路径重定向到登录页
@@ -125,7 +136,15 @@ urlpatterns = [
 
     # Form 混合数据上传
     path('upload/form/', upload.upload_form),
-    
+
+    # ModelForm 混合数据上传
+    path('upload/modelform/', upload.upload_modelform),
+    # 展示ModelForm 上传的数据
+    path('city/list/', city.city_list),
+
+    # 新建展示数据
+    path('city/add/', city.city_add),
+
     # 个人资料和我的信息
     path('profile/', profile.personal_profile),
     path('profile/update/', profile.update_profile),

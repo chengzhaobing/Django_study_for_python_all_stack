@@ -70,7 +70,15 @@ class Order(models.Model):
 
 
 class Boss(models.Model):
-    """ 读取Form 上传的信息 存储到此表"""
+    """ 读取Form 上传的信息 存储到此表 """
     name = models.CharField(verbose_name="姓名",max_length=32)
     age = models.IntegerField(verbose_name="年龄")
     img = models.CharField(verbose_name="头像", max_length=128)
+
+
+class City(models.Model):
+    """ 读取 ModelFrom 上传的信息 存储到此表 """
+    name = models.CharField(verbose_name="名称",max_length=32)
+    count = models.IntegerField(verbose_name="人口")
+    # 本质上数据库也是CharField,自动保存数据---提供默认保存方法upload_to = media 文件夹下的目录名
+    img = models.FileField(verbose_name="Logo", max_length=128, upload_to="city/")
